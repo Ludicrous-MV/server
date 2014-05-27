@@ -1,0 +1,14 @@
+language: go
+
+go:
+  - 1.0
+  - 1.1
+  - 1.2
+  - tip
+
+install:
+  - go get github.com/go-martini/martini
+  - go get github.com/martini-contrib/binding
+  - go get github.com/martini-contrib/render
+  - go get labix.org/v2/mgo
+  - go get labix.org/v2/mgo/bson
