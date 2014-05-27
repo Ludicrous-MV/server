@@ -3,9 +3,9 @@ package main
 import (
 	"crypto/rand"
 	"flag"
-	"log"
 	"net/http"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/binding"
 	"github.com/martini-contrib/render"
@@ -35,6 +35,8 @@ const (
 	mgo_col      = "Files"
 )
 
+var log = logrus.New()
+
 func randstr(length int) string {
 
 	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -48,6 +50,10 @@ func randstr(length int) string {
 
 	return string(bytes)
 
+}
+
+func init() {
+	log.Formatter = new(logrus.TextFormatter)
 }
 
 func main() {
@@ -95,6 +101,10 @@ func main() {
 		}
 
 		if n != 1 {
+			log.WithFields(logrus.Fields{
+				"token": params["token"],
+			}).Error("Token not found.")
+
 			r.JSON(404, "")
 		} else {
 			var lmv_file LMVFile
@@ -104,6 +114,10 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
+
+			log.WithFields(logrus.Fields{
+				"token": params["token"],
+			}).Info("Retrieved existing token.")
 
 			r.JSON(200, lmv_file)
 		}
@@ -137,6 +151,10 @@ func main() {
 		}
 
 		r.JSON(200, map[string]interface{}{"token": token})
+
+		log.WithFields(logrus.Fields{
+			"token": token,
+		}).Info("Inserted new file.")
 
 	})
 
