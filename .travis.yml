@@ -10,4 +10,3 @@ install:
   - go get github.com/martini-contrib/binding
   - go get github.com/martini-contrib/render
   - go get labix.org/v2/mgo
-  - go get labix.org/v2/mgo/bson
