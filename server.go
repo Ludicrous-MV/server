@@ -3,7 +3,10 @@ package main
 import (
 	"crypto/rand"
 	"flag"
+	"io/ioutil"
 	"net/http"
+	"strconv"
+	"syscall"
 
 	"github.com/Sirupsen/logrus"
 	"github.com/go-martini/martini"
@@ -60,8 +63,13 @@ func main() {
 
 	host := flag.String("host", "127.0.0.1", "")
 	port := flag.String("port", "5688", "")
+	pid := flag.Bool("pid", false, "Save the PID to lmv-server.pid")
 
 	flag.Parse()
+
+	if *pid {
+		ioutil.WriteFile("lmv-server.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
+	}
 
 	session, err := mgo.Dial(mgo_host)
 
