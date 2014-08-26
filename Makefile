@@ -1,18 +1,17 @@
-all: clean server
+all: clean tracker
 
 clean:
 
 	rm -f lmv-server
 
-server:
+tracker:
 
-	go build server.go
-	mv server lmv-server
+	go build lmv-tracker.go
 
 install:
 
-	mv lmv-server /usr/local/bin/.
+	mv lmv-tracker /usr/local/bin/.
 
 uninstall:
 
-	rm -f /usr/local/bin/lmv-server
+	rm -f /usr/local/bin/lmv-tracker

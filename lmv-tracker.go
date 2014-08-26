@@ -68,7 +68,7 @@ func main() {
 	flag.Parse()
 
 	if *pid {
-		ioutil.WriteFile("lmv-server.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
+		ioutil.WriteFile("lmv-tracker.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
 	}
 
 	session, err := mgo.Dial(mgo_host)
