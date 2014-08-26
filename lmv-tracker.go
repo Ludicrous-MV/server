@@ -3,12 +3,12 @@ package main
 import (
 	"crypto/rand"
 	"flag"
+	"log"
 	"io/ioutil"
 	"strconv"
 	"syscall"
 
     "github.com/gin-gonic/gin"
-	"github.com/Sirupsen/logrus"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
@@ -35,8 +35,6 @@ const (
 	mgo_col      = "Files"
 )
 
-var log = logrus.New()
-
 func randstr(length int) string {
 
 	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -50,10 +48,6 @@ func randstr(length int) string {
 
 	return string(bytes)
 
-}
-
-func init() {
-	log.Formatter = new(logrus.TextFormatter)
 }
 
 func main() {
@@ -103,10 +97,6 @@ func main() {
 		}
 
 		if n != 1 {
-			log.WithFields(logrus.Fields{
-				"token": token,
-			}).Error("Token not found.")
-
 			gc.JSON(404, "")
 		} else {
 			var lmv_file LMVFile
@@ -116,10 +106,6 @@ func main() {
 			if err != nil {
 				log.Fatal(err)
 			}
-
-			log.WithFields(logrus.Fields{
-				"token": token,
-			}).Info("Retrieved existing token.")
 
 			gc.JSON(200, lmv_file)
 		}
@@ -156,10 +142,6 @@ func main() {
 		}
 
 		gc.JSON(200, map[string]interface{}{"token": token})
-
-		log.WithFields(logrus.Fields{
-			"token": token,
-		}).Info("Inserted new file.")
 
 	})
 
