@@ -4,14 +4,11 @@ import (
 	"crypto/rand"
 	"flag"
 	"io/ioutil"
-	"net/http"
 	"strconv"
 	"syscall"
 
+    "github.com/gin-gonic/gin"
 	"github.com/Sirupsen/logrus"
-	"github.com/go-martini/martini"
-	"github.com/martini-contrib/binding"
-	"github.com/martini-contrib/render"
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
@@ -61,8 +58,6 @@ func init() {
 
 func main() {
 
-	host := flag.String("host", "127.0.0.1", "")
-	port := flag.String("port", "5688", "")
 	pid := flag.Bool("pid", false, "Save the PID to lmv-server.pid")
 
 	flag.Parse()
@@ -83,26 +78,25 @@ func main() {
 
 	c := session.DB(mgo_db).C(mgo_col)
 
-	m := martini.Classic()
-	m.Use(render.Renderer())
+    r := gin.Default()
 
-	m.Get("/files/", func(r render.Render) {
+    r.GET("/files/", func(gc *gin.Context) {
+        var lmv_files []LMVFile
 
-		var lmv_files []LMVFile
+        err := c.Find(bson.M{}).All(&lmv_files)
 
-		err := c.Find(bson.M{}).All(&lmv_files)
+        if err != nil {
+            log.Fatal(err)
+        }
 
-		if err != nil {
-			log.Fatal(err)
-		}
+        gc.JSON(200, lmv_files)
+    })
 
-		r.JSON(200, lmv_files)
+    r.GET("/files/:token/", func(gc *gin.Context) {
 
-	})
+        token := gc.Params.ByName("token")
 
-	m.Get("/files/:token/", func(params martini.Params, r render.Render) {
-
-		n, err := c.Find(bson.M{"token": params["token"]}).Count()
+		n, err := c.Find(bson.M{"token": token}).Count()
 
 		if err != nil {
 			log.Fatal(err)
@@ -110,31 +104,34 @@ func main() {
 
 		if n != 1 {
 			log.WithFields(logrus.Fields{
-				"token": params["token"],
+				"token": token,
 			}).Error("Token not found.")
 
-			r.JSON(404, "")
+			gc.JSON(404, "")
 		} else {
 			var lmv_file LMVFile
 
-			err = c.Find(bson.M{"token": params["token"]}).One(&lmv_file)
+			err = c.Find(bson.M{"token": token}).One(&lmv_file)
 
 			if err != nil {
 				log.Fatal(err)
 			}
 
 			log.WithFields(logrus.Fields{
-				"token": params["token"],
+				"token": token,
 			}).Info("Retrieved existing token.")
 
-			r.JSON(200, lmv_file)
+			gc.JSON(200, lmv_file)
 		}
 
 	})
 
-	m.Post("/files/", binding.Bind(LMVFile{}), func(r render.Render, lmv_file LMVFile) {
+    r.POST("/files/", func (gc *gin.Context) {
 
 		token := randstr(token_length)
+        var lmv_file LMVFile
+
+        gc.Bind(&lmv_file)
 
 		for {
 			n, err := c.Find(bson.M{"token": token}).Count()
@@ -158,7 +155,7 @@ func main() {
 			log.Fatal(err)
 		}
 
-		r.JSON(200, map[string]interface{}{"token": token})
+		gc.JSON(200, map[string]interface{}{"token": token})
 
 		log.WithFields(logrus.Fields{
 			"token": token,
@@ -166,5 +163,10 @@ func main() {
 
 	})
 
-	log.Fatal(http.ListenAndServe(*host+":"+*port, m))
+    r.GET("/ping/", func(c *gin.Context) {
+        c.String(200, "pong")
+    })
+
+    r.Run(":8080")
+
 }
