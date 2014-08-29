@@ -3,17 +3,18 @@ package main
 import (
 	"crypto/rand"
 	"flag"
-	"log"
 	"io/ioutil"
+	"log"
 	"strconv"
 	"syscall"
 
-    "github.com/gin-gonic/gin"
-	"labix.org/v2/mgo"
-	"labix.org/v2/mgo/bson"
+	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type LMVFile struct {
+	Id        int64
 	Size      int64      `bson:"size"         json:"size"         binding:"required"`
 	Name      string     `bson:"name"         json:"name"         binding:"required"`
 	Algorithm string     `bson:"algorithm"    json:"algorithm"    binding:"required"`
@@ -23,16 +24,15 @@ type LMVFile struct {
 }
 
 type LMVChunk struct {
-	Hash  string `bson:"hash"         json:"hash"         binding:"required"`
-	Size  int64  `bson:"size"         json:"size"         binding:"required"`
-	Index int    `bson:"index"        json:"index"        binding:"required"`
+	Id        int64
+	LMVFileId int64
+	Hash      string `bson:"hash"         json:"hash"         binding:"required"`
+	Size      int64  `bson:"size"         json:"size"         binding:"required"`
+	Index     int    `bson:"index"        json:"index"        binding:"required"`
 }
 
 const (
 	token_length = 10
-	mgo_host     = "localhost"
-	mgo_db       = "Ludicrous-MV"
-	mgo_col      = "Files"
 )
 
 func randstr(length int) string {
@@ -60,95 +60,103 @@ func main() {
 		ioutil.WriteFile("lmv-tracker.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
 	}
 
-	session, err := mgo.Dial(mgo_host)
+	db, err := gorm.Open("sqlite3", "lmv-tracker.db")
 
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
-	defer session.Close()
+	db.DB()
+	db.DB().Ping()
 
-	session.SetMode(mgo.Monotonic, true)
+	db.CreateTable(LMVFile{})
+	db.CreateTable(LMVChunk{})
 
-	c := session.DB(mgo_db).C(mgo_col)
+	r := gin.Default()
 
-    r := gin.Default()
+	r.GET("/files/", func(gc *gin.Context) {
+		var lmvfiles []LMVFile
+		var response []LMVFile
 
-    r.GET("/files/", func(gc *gin.Context) {
-        var lmv_files []LMVFile
+		db.Find(&lmvfiles)
 
-        err := c.Find(bson.M{}).All(&lmv_files)
+		for _, file := range lmvfiles {
 
-        if err != nil {
-            log.Fatal(err)
-        }
+			var chunks []LMVChunk
 
-        gc.JSON(200, lmv_files)
-    })
+			db.Where(&LMVChunk{LMVFileId: file.Id}).Find(&chunks)
 
-    r.GET("/files/:token/", func(gc *gin.Context) {
+			file.Chunks = chunks
 
-        token := gc.Params.ByName("token")
-
-		n, err := c.Find(bson.M{"token": token}).Count()
-
-		if err != nil {
-			log.Fatal(err)
+			response = append(response, file)
 		}
 
-		if n != 1 {
-			gc.JSON(404, "")
+		gc.JSON(200, response)
+	})
+
+	r.GET("/files/:token/", func(gc *gin.Context) {
+
+		token := gc.Params.ByName("token")
+		var lmv_file LMVFile
+		var response LMVFile
+
+		db.Where(&LMVFile{Token: token}).First(&lmv_file)
+
+		if lmv_file.Name != "" {
+
+			var chunks []LMVChunk
+
+			db.Where(&LMVChunk{LMVFileId: lmv_file.Id}).Find(&chunks)
+
+			response = lmv_file
+			response.Chunks = chunks
+
+			gc.JSON(200, response)
+
 		} else {
-			var lmv_file LMVFile
 
-			err = c.Find(bson.M{"token": token}).One(&lmv_file)
+			gc.JSON(404, nil)
 
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			gc.JSON(200, lmv_file)
 		}
 
 	})
 
-    r.POST("/files/", func (gc *gin.Context) {
+	r.POST("/files/", func(gc *gin.Context) {
 
 		token := randstr(token_length)
-        var lmv_file LMVFile
+		var lmv_file LMVFile
 
-        gc.Bind(&lmv_file)
+		gc.Bind(&lmv_file)
 
 		for {
-			n, err := c.Find(bson.M{"token": token}).Count()
 
-			if err != nil {
-				log.Fatal(err)
-			}
+			var testFile = LMVFile{}
+			db.Where(&LMVFile{Token: token}).First(&testFile)
 
-			if n > 0 {
+			if testFile.Name != "" {
+
 				token = randstr(token_length)
+
 			} else {
+
 				break
+
 			}
+
 		}
 
 		lmv_file.Token = token
 
-		err := c.Insert(lmv_file)
-
-		if err != nil {
-			log.Fatal(err)
-		}
+		db.Create(&lmv_file)
 
 		gc.JSON(200, map[string]interface{}{"token": token})
 
 	})
 
-    r.GET("/ping/", func(c *gin.Context) {
-        c.String(200, "pong")
-    })
+	r.GET("/ping/", func(c *gin.Context) {
+		c.String(200, "pong")
+	})
 
-    r.Run(":8080")
+	r.Run(":8080")
 
 }
