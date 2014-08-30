@@ -1,4 +1,11 @@
-all: clean tracker
+all: clean dependencies tracker
+
+dependencies:
+
+	go get github.com/dchest/uniuri
+	go get github.com/gin-gonic/gin
+	go get github.com/jinzhu/gorm
+	go get github.com/mattn/go-sqlite3
 
 clean:
 
