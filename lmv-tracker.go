@@ -1,13 +1,13 @@
 package main
 
 import (
-	"crypto/rand"
 	"flag"
 	"io/ioutil"
 	"log"
 	"strconv"
 	"syscall"
 
+    "github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
@@ -35,18 +35,10 @@ const (
 	token_length = 10
 )
 
-func randstr(length int) string {
+func GenerateToken() string {
 
-	const alphanum = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	var bytes = make([]byte, length)
-
-	rand.Read(bytes)
-
-	for i, b := range bytes {
-		bytes[i] = alphanum[b%byte(len(alphanum))]
-	}
-
-	return string(bytes)
+    pool := []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+    return uniuri.NewLenChars(token_length, pool)
 
 }
 
@@ -123,7 +115,7 @@ func main() {
 
 	r.POST("/files/", func(gc *gin.Context) {
 
-		token := randstr(token_length)
+		token := GenerateToken()
 		var lmv_file LMVFile
 
 		gc.Bind(&lmv_file)
@@ -135,7 +127,7 @@ func main() {
 
 			if testFile.Name != "" {
 
-				token = randstr(token_length)
+				token = GenerateToken()
 
 			} else {
 
