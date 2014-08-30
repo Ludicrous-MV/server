@@ -14,7 +14,7 @@ import (
 )
 
 type LMVFile struct {
-	Id        int64
+	Id        int64      `json:"-"`
 	Size      int64      `bson:"size"         json:"size"         binding:"required"`
 	Name      string     `bson:"name"         json:"name"         binding:"required"`
 	Algorithm string     `bson:"algorithm"    json:"algorithm"    binding:"required"`
@@ -24,8 +24,8 @@ type LMVFile struct {
 }
 
 type LMVChunk struct {
-	Id        int64
-	LMVFileId int64
+	Id        int64  `json:"-"`
+	LMVFileId int64  `json:"-"`
 	Hash      string `bson:"hash"         json:"hash"         binding:"required"`
 	Size      int64  `bson:"size"         json:"size"         binding:"required"`
 	Index     int    `bson:"index"        json:"index"        binding:"required"`
