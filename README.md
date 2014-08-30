@@ -15,12 +15,3 @@
     $ ./lmv-tracker --help
     Usage of ./lmv-tracker:
       -pid=false: Save the PID to lmv-server.pid
-
-## API Endpoints
-
-
-| Method | Endpoint | Parameters | Response |
-|:------:|:---------|:-----|:---------|
-| GET | `/files/` | | __200__<br>Array of JSON objects representing files on the server |
-| GET | `/files/<token>` | | __200__<br>JSON object representing the file associated with the token<br>__404__<br>When the token requested doesn't exist on the server|
-| POST | `/files/` | __Headers__<br>`Content-Type: application/json`<br>__Body__<br>JSON representation of the file | __200__<br>JSON object containing the token associated with the new file |
