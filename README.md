@@ -1,7 +1,6 @@
 ## Ludicrous MV Server
 
-[![Build Status](https://travis-ci.org/Ludicrous-MV/server.svg?branch=master)](https://travis-ci.org/Ludicrous-MV/server)
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;[![wercker status](https://app.wercker.com/status/037ce014d4ef61782a039dad204b2349/s "wercker status")](https://app.wercker.com/project/bykey/037ce014d4ef61782a039dad204b2349)
+[![wercker status](https://app.wercker.com/status/037ce014d4ef61782a039dad204b2349/s "wercker status")](https://app.wercker.com/project/bykey/037ce014d4ef61782a039dad204b2349)
 
 ## Installation
 
