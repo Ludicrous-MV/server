@@ -5,33 +5,16 @@
 
 ## Installation
 
-### Git
-
-    $ git clone https://github.com/Ludicrous-MV/server.git
-    $ cd server
-    $ go get ./...
-    $ go get labix.org/v2/mgo
+    $ git clone https://github.com/citruspi/Ludicrous-MV-Tracker.git
+    $ cd Ludicrous-MV-Tracker
     $ make
     $ make install
 
-### Go Install
-
-    $ go get github.com/Ludicrous-MV/server
-    $ go install github.com/Ludicrous-MV/server
-
-## Assumptions
-
-The server automatically attempts to connect to a MongoDB instance hosted on `localhost` and creates/uses a database called `Ludicrous-MV`, storing uploaded files in a collections called `Files`.
-
-If you would like to change any of this (use a different host, database, etc.) you will need to pull down the source and modify the constants defined in `server.go` before building it.
-
 ## Usage
 
-    $ lmv-server -h
-    Usage of lmv-server:
-      -host="127.0.0.1":
+    $ ./lmv-tracker --help
+    Usage of ./lmv-tracker:
       -pid=false: Save the PID to lmv-server.pid
-      -port="5688":
 
 ## API Endpoints
 
