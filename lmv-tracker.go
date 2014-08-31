@@ -4,7 +4,8 @@ import (
     "fmt"
     "io/ioutil"
 	"log"
-	"strconv"
+    "os"
+    "strconv"
 	"syscall"
 
     "github.com/tsuru/config"
@@ -60,8 +61,14 @@ func GenerateToken(conf Configuration) string {
 func processConfig() Configuration {
     
     conf := Configuration{}
-
-    config.ReadConfigFile("lmv-tracker.yml")
+    
+    if _, err := os.Stat("lmv-tracker.yml"); err == nil {
+        config.ReadConfigFile("lmv-tracker.yml")
+    } else {
+    	if _, err := os.Stat("/etc/lmv-tracker.yml"); err == nil {
+    		config.ReadConfigFile("/etc/lmv-tracker.yml")
+    	}
+    }
 
     address, _ := config.GetString("web:address")
     conf.Web.Address = address
