@@ -5,6 +5,7 @@ import (
     "io/ioutil"
 	"log"
     "os"
+    "os/user"
     "strconv"
 	"syscall"
 
@@ -65,8 +66,18 @@ func processConfig() Configuration {
     if _, err := os.Stat("lmv-tracker.yml"); err == nil {
         config.ReadConfigFile("lmv-tracker.yml")
     } else {
-    	if _, err := os.Stat("/etc/lmv-tracker.yml"); err == nil {
-    		config.ReadConfigFile("/etc/lmv-tracker.yml")
+        usr, err := user.Current()
+
+        if err != nil {
+            log.Fatal(err)
+        }
+
+        if _, err := os.Stat(usr.HomeDir+"/lmv-tracker.yml"); err == nil {
+            config.ReadConfigFile(usr.HomeDir+"/lmv-tracker.yml")
+        } else {
+            if _, err := os.Stat("/etc/lmv-tracker.yml"); err == nil {
+        		config.ReadConfigFile("/etc/lmv-tracker.yml")
+    	    }
     	}
     }
 
