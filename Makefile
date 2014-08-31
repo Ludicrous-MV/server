@@ -8,6 +8,7 @@ dependencies:
 	go get github.com/jinzhu/gorm
 	go get github.com/mattn/go-sqlite3
 	go get github.com/go-sql-driver/mysql
+	go get github.com/lib/pq
 
 clean:
 

@@ -8,6 +8,9 @@ web:
 database:
     type: sqlite3
     source: lmv-tracker.db
-database:
-    type: mysql
-    source: root@/LMV
+#database:
+#    type: mysql
+#    source: user:password@/lmv
+#database:
+#    type: postgres
+#    source: dbname=lmv sslmode=disable
