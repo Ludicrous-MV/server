@@ -53,15 +53,15 @@ type Configuration struct {
     }
 }
 
-func GenerateToken(conf Configuration) string {
+var conf Configuration
+
+func GenerateToken() string {
 
     return uniuri.NewLenChars(conf.Tokens.Length, conf.Tokens.Pool)
 
 }
 
-func processConfig() Configuration {
-    
-    conf := Configuration{}
+func processConfig() {
     
     foundConf := true
 
@@ -114,13 +114,11 @@ func processConfig() Configuration {
         conf.Database.Source = "lmv-tracker.db"
     }
 
-    return conf
-
 }
 
 func main() {
 
-    conf := processConfig()
+    processConfig()
 
 	if conf.System.Pid {
 		ioutil.WriteFile("lmv-tracker.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
@@ -189,7 +187,7 @@ func main() {
 
 	r.POST("/files/", func(gc *gin.Context) {
 
-		token := GenerateToken(conf)
+		token := GenerateToken()
 		var lmv_file LMVFile
 
 		gc.Bind(&lmv_file)
@@ -201,7 +199,7 @@ func main() {
 
 			if testFile.Name != "" {
 
-				token = GenerateToken(conf)
+				token = GenerateToken()
 
 			} else {
 
