@@ -9,7 +9,7 @@ dependencies:
 
 clean:
 
-	rm -f lmv-server
+	rm -f lmv-tracker
 
 tracker:
 
