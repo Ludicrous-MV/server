@@ -2,6 +2,7 @@ all: clean dependencies tracker
 
 dependencies:
 
+	go get github.com/tsuru/config
 	go get github.com/dchest/uniuri
 	go get github.com/gin-gonic/gin
 	go get github.com/jinzhu/gorm
