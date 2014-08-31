@@ -10,6 +10,7 @@ dependencies:
 clean:
 
 	rm -f lmv-tracker
+	rm -f lmv-tracker.db
 
 tracker:
 
