@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/mattn/go-sqlite3"
+    _ "github.com/go-sql-driver/mysql"
 )
 
 type LMVFile struct {

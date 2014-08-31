@@ -8,3 +8,6 @@ web:
 database:
     type: sqlite3
     source: lmv-tracker.db
+database:
+    type: mysql
+    source: root@/LMV
