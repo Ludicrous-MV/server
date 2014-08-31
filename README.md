@@ -11,7 +11,13 @@
 
 ## Configuration
 
-There must be a configuration file in the same directory as the binary. It should be named `lmv-tracker.yml` and should be formatted as such:
+A configuration file named `lmv-tracker.yml` will be looked for in:
+
+- the current directory
+- the user's home directory
+- /etc/
+
+If a configuration file isn't found, the following defaults will be used:
 
 ```
 tokens:
