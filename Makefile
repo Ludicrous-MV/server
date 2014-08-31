@@ -11,6 +11,7 @@ clean:
 
 	rm -f lmv-tracker
 	rm -f lmv-tracker.db
+	rm -f lmv-tracker.pid
 
 tracker:
 
