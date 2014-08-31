@@ -215,7 +215,7 @@ func main() {
 
 		db.Create(&lmv_file)
 
-		gc.JSON(200, map[string]interface{}{"token": token})
+		gc.JSON(200, lmv_file)
 
 	})
 
