@@ -1,7 +1,6 @@
 package main
 
 import (
-    "fmt"
     "io/ioutil"
 	"log"
     "os"
@@ -94,8 +93,6 @@ func processConfig() {
 
         token_pool, _ := config.GetString("tokens:pool")
         conf.Tokens.Pool = []byte(token_pool)
-
-        fmt.Println(conf.Tokens.Pool)
 
         token_length, _ := config.GetInt("tokens:length")
         conf.Tokens.Length = token_length
