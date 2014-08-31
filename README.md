@@ -9,6 +9,19 @@
     $ make
     $ make install
 
+## Configuration
+
+There must be a configuration file in the same directory as the binary. It should be named `lmv-tracker.yml` and should be formatted as such:
+
+```
+web:
+    address: :8080
+system:
+    pid: False
+```
+
+A sample configuration file is included.
+
 ## Usage
 
     $ ./lmv-tracker --help
