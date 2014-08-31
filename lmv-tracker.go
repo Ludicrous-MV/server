@@ -63,6 +63,8 @@ func processConfig() Configuration {
     
     conf := Configuration{}
     
+    foundConf := true
+
     if _, err := os.Stat("lmv-tracker.yml"); err == nil {
         config.ReadConfigFile("lmv-tracker.yml")
     } else {
@@ -77,31 +79,43 @@ func processConfig() Configuration {
         } else {
             if _, err := os.Stat("/etc/lmv-tracker.yml"); err == nil {
         		config.ReadConfigFile("/etc/lmv-tracker.yml")
-    	    }
+    	    } else {
+                foundConf = false
+            }
     	}
     }
+    
+    if foundConf {
+        address, _ := config.GetString("web:address")
+        conf.Web.Address = address
 
-    address, _ := config.GetString("web:address")
-    conf.Web.Address = address
+        pid, _ := config.GetBool("system:pid")
+        conf.System.Pid = pid
 
-    pid, _ := config.GetBool("system:pid")
-    conf.System.Pid = pid
+        token_pool, _ := config.GetString("tokens:pool")
+        conf.Tokens.Pool = []byte(token_pool)
 
-    token_pool, _ := config.GetString("tokens:pool")
-    conf.Tokens.Pool = []byte(token_pool)
+        fmt.Println(conf.Tokens.Pool)
 
-    fmt.Println(conf.Tokens.Pool)
+        token_length, _ := config.GetInt("tokens:length")
+        conf.Tokens.Length = token_length
 
-    token_length, _ := config.GetInt("tokens:length")
-    conf.Tokens.Length = token_length
+        database_type, _ := config.GetString("database:type")
+        conf.Database.Type = database_type
 
-    database_type, _ := config.GetString("database:type")
-    conf.Database.Type = database_type
-
-    database_source, _ := config.GetString("database:source")
-    conf.Database.Source = database_source
+        database_source, _ := config.GetString("database:source")
+        conf.Database.Source = database_source
+    } else {
+        conf.Web.Address = ":8080"
+        conf.System.Pid = false
+        conf.Tokens.Pool = []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
+        conf.Tokens.Length = 10
+        conf.Database.Type = "sqlite3"
+        conf.Database.Source = "lmv-tracker.db"
+    }
 
     return conf
+
 }
 
 func main() {
