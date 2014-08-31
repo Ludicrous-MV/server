@@ -1,3 +1,6 @@
+tokens:
+    pool: ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+    length: 10
 system:
     pid: False
 web:

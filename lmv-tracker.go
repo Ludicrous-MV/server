@@ -1,7 +1,8 @@
 package main
 
 import (
-	"io/ioutil"
+    "fmt"
+    "io/ioutil"
 	"log"
 	"strconv"
 	"syscall"
@@ -38,16 +39,15 @@ type Configuration struct {
     System  struct {
         Pid         bool
     }
+    Tokens  struct {
+    	Pool        []byte
+    	Length      int
+    }
 }
 
-const (
-	token_length = 10
-)
+func GenerateToken(conf Configuration) string {
 
-func GenerateToken() string {
-
-    pool := []byte("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
-    return uniuri.NewLenChars(token_length, pool)
+    return uniuri.NewLenChars(conf.Tokens.Length, conf.Tokens.Pool)
 
 }
 
@@ -57,11 +57,19 @@ func processConfig() Configuration {
 
     config.ReadConfigFile("lmv-tracker.yml")
 
-    address, _ := config.Get("web:address")
-    conf.Web.Address = address.(string)
+    address, _ := config.GetString("web:address")
+    conf.Web.Address = address
 
     pid, _ := config.GetBool("system:pid")
     conf.System.Pid = pid
+
+    token_pool, _ := config.GetString("tokens:pool")
+    conf.Tokens.Pool = []byte(token_pool)
+
+    fmt.Println(conf.Tokens.Pool)
+
+    token_length, _ := config.GetInt("tokens:length")
+    conf.Tokens.Length = token_length
 
     return conf
 }
@@ -137,7 +145,7 @@ func main() {
 
 	r.POST("/files/", func(gc *gin.Context) {
 
-		token := GenerateToken()
+		token := GenerateToken(conf)
 		var lmv_file LMVFile
 
 		gc.Bind(&lmv_file)
@@ -149,7 +157,7 @@ func main() {
 
 			if testFile.Name != "" {
 
-				token = GenerateToken()
+				token = GenerateToken(conf)
 
 			} else {
 
