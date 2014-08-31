@@ -27,6 +27,4 @@ A sample configuration file is included.
 
 ## Usage
 
-    $ ./lmv-tracker --help
-    Usage of ./lmv-tracker:
-      -pid=false: Save the PID to lmv-server.pid
+    $ ./lmv-tracker
