@@ -16,11 +16,14 @@ There must be a configuration file in the same directory as the binary. It shoul
 ```
 tokens:
     pool: ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
-    length: 5
+    length: 10
 system:
     pid: False
 web:
     address: :8080
+database:
+    type: sqlite3
+    source: lmv-tracker.db
 ```
 
 A sample configuration file is included.
