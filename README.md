@@ -1,6 +1,6 @@
 ## Ludicrous MV Server
 
-[![wercker status](https://app.wercker.com/status/037ce014d4ef61782a039dad204b2349/s "wercker status")](https://app.wercker.com/project/bykey/037ce014d4ef61782a039dad204b2349)
+[![wercker status](https://app.wercker.com/status/f86323ec0e58822770ce55241591999c/s/master "wercker status")](https://app.wercker.com/project/bykey/f86323ec0e58822770ce55241591999c)
 
 ## Installation
 
