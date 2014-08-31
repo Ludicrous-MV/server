@@ -14,10 +14,13 @@
 There must be a configuration file in the same directory as the binary. It should be named `lmv-tracker.yml` and should be formatted as such:
 
 ```
-web:
-    address: :8080
+tokens:
+    pool: ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789
+    length: 5
 system:
     pid: False
+web:
+    address: :8080
 ```
 
 A sample configuration file is included.
