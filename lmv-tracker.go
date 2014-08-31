@@ -1,12 +1,12 @@
 package main
 
 import (
-	"flag"
 	"io/ioutil"
 	"log"
 	"strconv"
 	"syscall"
 
+    "github.com/tsuru/config"
     "github.com/dchest/uniuri"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
@@ -31,6 +31,15 @@ type LMVChunk struct {
 	Index     int    `bson:"index"        json:"index"        binding:"required"`
 }
 
+type Configuration struct {
+    Web     struct {
+        Address     string
+    }
+    System  struct {
+        Pid         bool
+    }
+}
+
 const (
 	token_length = 10
 )
@@ -42,13 +51,26 @@ func GenerateToken() string {
 
 }
 
+func processConfig() Configuration {
+    
+    conf := Configuration{}
+
+    config.ReadConfigFile("lmv-tracker.yml")
+
+    address, _ := config.Get("web:address")
+    conf.Web.Address = address.(string)
+
+    pid, _ := config.GetBool("system:pid")
+    conf.System.Pid = pid
+
+    return conf
+}
+
 func main() {
 
-	pid := flag.Bool("pid", false, "Save the PID to lmv-server.pid")
+    conf := processConfig()
 
-	flag.Parse()
-
-	if *pid {
+	if conf.System.Pid {
 		ioutil.WriteFile("lmv-tracker.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
 	}
 
@@ -149,6 +171,6 @@ func main() {
 		c.String(200, "pong")
 	})
 
-	r.Run(":8080")
+	r.Run(conf.Web.Address)
 
 }
