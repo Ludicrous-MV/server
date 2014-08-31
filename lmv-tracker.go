@@ -20,20 +20,20 @@ import (
 
 type LMVFile struct {
 	Id        int64      `json:"-"`
-	Size      int64      `bson:"size"         json:"size"         binding:"required"`
-	Name      string     `bson:"name"         json:"name"         binding:"required"`
-	Algorithm string     `bson:"algorithm"    json:"algorithm"    binding:"required"`
-	Chunks    []LMVChunk `bson:"chunks"       json:"chunks"       binding:"required"`
-	Tar       bool       `bson:"tar"          json:"tar"`
-	Token     string     `bson:"token"        json:"token"`
+	Size      int64      `json:"size"         binding:"required"`
+	Name      string     `json:"name"         binding:"required"`
+	Algorithm string     `json:"algorithm"    binding:"required"`
+	Chunks    []LMVChunk `json:"chunks"       binding:"required"`
+	Tar       bool       `json:"tar"`
+	Token     string     `json:"token"`
 }
 
 type LMVChunk struct {
 	Id        int64  `json:"-"`
 	LMVFileId int64  `json:"-"`
-	Hash      string `bson:"hash"         json:"hash"         binding:"required"`
-	Size      int64  `bson:"size"         json:"size"         binding:"required"`
-	Index     int    `bson:"index"        json:"index"        binding:"required"`
+	Hash      string `json:"hash"         binding:"required"`
+	Size      int64  `json:"size"         binding:"required"`
+	Index     int    `json:"index"        binding:"required"`
 }
 
 type Configuration struct {
