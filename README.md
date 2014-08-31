@@ -15,7 +15,7 @@ A configuration file named `lmv-tracker.yml` will be looked for in:
 
 - the current directory
 - the user's home directory
-- /etc/
+- `/etc/`
 
 If a configuration file isn't found, the following defaults will be used:
 
@@ -36,4 +36,4 @@ A sample configuration file is included.
 
 ## Usage
 
-    $ ./lmv-tracker
+    $ lmv-tracker
