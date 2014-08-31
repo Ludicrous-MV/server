@@ -5,3 +5,6 @@ system:
     pid: False
 web:
     address: :8080
+database:
+    type: sqlite3
+    source: lmv-tracker.db

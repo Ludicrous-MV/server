@@ -43,6 +43,10 @@ type Configuration struct {
     	Pool        []byte
     	Length      int
     }
+    Database struct {
+        Type        string
+        Source      string
+    }
 }
 
 func GenerateToken(conf Configuration) string {
@@ -71,6 +75,12 @@ func processConfig() Configuration {
     token_length, _ := config.GetInt("tokens:length")
     conf.Tokens.Length = token_length
 
+    database_type, _ := config.GetString("database:type")
+    conf.Database.Type = database_type
+
+    database_source, _ := config.GetString("database:source")
+    conf.Database.Source = database_source
+
     return conf
 }
 
@@ -82,7 +92,7 @@ func main() {
 		ioutil.WriteFile("lmv-tracker.pid", []byte(strconv.Itoa(syscall.Getpid())), 0644)
 	}
 
-	db, err := gorm.Open("sqlite3", "lmv-tracker.db")
+	db, err := gorm.Open(conf.Database.Type, conf.Database.Source)
 
 	if err != nil {
 		log.Fatal(err)
